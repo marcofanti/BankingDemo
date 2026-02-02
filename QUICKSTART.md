@@ -20,11 +20,12 @@ The application will start on **http://localhost:8080**
 
 ### Option 3: Run with Environment Variables
 ```bash
-# Set organization ID for landing page profiling
-ORG_ID=your-org-id-here mvn spring-boot:run
+# Set organization ID and API key for session validation
+ORG_ID=your-org-id-here API_KEY=your-api-key-here mvn spring-boot:run
 
-# Or export it first
+# Or export them first
 export ORG_ID=your-org-id-here
+export API_KEY=your-api-key-here
 mvn spring-boot:run
 ```
 
@@ -35,27 +36,31 @@ The application supports the following environment variables:
 | Variable | Description | Default | Usage |
 |----------|-------------|---------|-------|
 | `ORG_ID` | Organization ID for landing page profiling script | `your-org-id-here` | Used in landing.html for third-party profiling integration |
+| `API_KEY` | API key for session validation service | `your-api-key-here` | Used by SessionQueryService to validate user sessions after login |
 
 **Setting Environment Variables:**
 
 ```bash
 # Linux/Mac
 export ORG_ID=ctvkbfxp
+export API_KEY=your-api-key-123
 mvn spring-boot:run
 
 # Windows Command Prompt
 set ORG_ID=ctvkbfxp
+set API_KEY=your-api-key-123
 mvn spring-boot:run
 
 # Windows PowerShell
 $env:ORG_ID="ctvkbfxp"
+$env:API_KEY="your-api-key-123"
 mvn spring-boot:run
 
 # Inline (Linux/Mac)
-ORG_ID=ctvkbfxp mvn spring-boot:run
+ORG_ID=ctvkbfxp API_KEY=your-api-key-123 mvn spring-boot:run
 
 # Via Maven command line
-mvn spring-boot:run -Dapp.org.id=ctvkbfxp
+mvn spring-boot:run -Dapp.org.id=ctvkbfxp -Dapp.api.key=your-api-key-123
 ```
 
 ## Application Structure
@@ -91,6 +96,8 @@ Each user has:
 - ✅ Error handling for invalid credentials
 - ✅ Protected routes (dashboard requires login)
 - ✅ Logout functionality
+- ✅ External session validation via API after login
+- ✅ Session ID tracking from landing page to login
 
 ### Account Management
 - ✅ Multiple account types (Checking, Savings, Investment)
@@ -219,6 +226,30 @@ app.org.id=your-org-id
 **Via Command Line:**
 ```bash
 mvn spring-boot:run -Dapp.org.id=your-org-id
+```
+
+### Setting API Key for Session Validation
+The application validates user sessions with an external API after login. Configure the API key:
+
+**Via Environment Variable (Recommended):**
+```bash
+API_KEY=your-api-key mvn spring-boot:run
+```
+
+**Via Application Properties:**
+Edit `src/main/resources/application.properties`:
+```properties
+app.api.key=your-api-key
+```
+
+**Via Command Line:**
+```bash
+mvn spring-boot:run -Dapp.api.key=your-api-key
+```
+
+**Complete Example with Both Variables:**
+```bash
+ORG_ID=ctvkbfxp API_KEY=your-api-key-123 mvn spring-boot:run
 ```
 
 ### Password Requirements

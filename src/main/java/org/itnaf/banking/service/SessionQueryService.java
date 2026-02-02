@@ -52,6 +52,19 @@ public class SessionQueryService {
             // Hash the password using SHA-256
             String passwordHash = hashPassword(plainPassword);
 
+            // Log all parameters
+            System.out.println("========== SESSION QUERY API CALL PARAMETERS ==========");
+            System.out.println("API Base URL: " + apiBaseUrl);
+            System.out.println("org_id: " + orgId);
+            System.out.println("api_key: " + (apiKey != null ? apiKey.substring(0, Math.min(4, apiKey.length())) + "***" : "null"));
+            System.out.println("session_id: " + sessionId);
+            System.out.println("service_type: session-policy");
+            System.out.println("account_login: " + accountEmail);
+            System.out.println("account_email: " + accountEmail);
+            System.out.println("password_hash: " + passwordHash);
+            System.out.println("event_type: " + eventType);
+            System.out.println("======================================================");
+
             // Build the API URL with query parameters
             String url = UriComponentsBuilder.fromHttpUrl(apiBaseUrl)
                     .path("/api/session-query")
@@ -67,21 +80,24 @@ public class SessionQueryService {
                     .toUriString();
 
             logger.info("Calling session query API for user: {} with session: {}", accountEmail, sessionId);
-            logger.debug("API URL: {}", url.replaceAll("api_key=[^&]*", "api_key=***"));
+            System.out.println("Full API URL (masked): " + url.replaceAll("api_key=[^&]*", "api_key=***"));
 
             // Make the API call
             String response = restTemplate.getForObject(url, String.class);
 
             logger.info("Session query API response received for user: {}", accountEmail);
-            logger.debug("Response: {}", response);
+            System.out.println("========== API RESPONSE ==========");
+            System.out.println(response);
+            System.out.println("==================================");
 
             // Parse and return response
             return parseResponse(response);
 
         } catch (Exception e) {
             logger.error("Error calling session query API for user: {}", accountEmail, e);
+            System.out.println("API call exception: " + e.getMessage());
             // Return a response indicating API call failed but allow login
-            return new SessionQueryResponse(false, true, "API call failed: " + e.getMessage());
+            return new SessionQueryResponse(true, false, "API call failed: " + e.getMessage());
         }
     }
 
@@ -117,14 +133,23 @@ public class SessionQueryService {
     private SessionQueryResponse parseResponse(String response) {
         if (response == null || response.trim().isEmpty()) {
             logger.warn("Empty response from session query API");
-            return new SessionQueryResponse(false, true, "Empty API response");
+            return new SessionQueryResponse(true, false, "Empty API response - allowing login");
         }
 
-        // Simple parsing - adjust based on actual API response format
-        // Assuming API returns JSON or similar format indicating success/failure
-        boolean isValid = !response.toLowerCase().contains("deny")
-                       && !response.toLowerCase().contains("reject")
-                       && !response.toLowerCase().contains("fail");
+        String responseLower = response.toLowerCase();
+
+        // Check for configuration/parameter errors - allow login for these
+        if (responseLower.contains("fail_invalid_parameter") ||
+            responseLower.contains("error_detail=org_id") ||
+            responseLower.contains("error_detail=api_key")) {
+            logger.warn("API configuration error detected, allowing login: {}", response);
+            return new SessionQueryResponse(true, false, "API config error - allowing login: " + response);
+        }
+
+        // Check for actual fraud/risk denial - these should block login
+        boolean isValid = !responseLower.contains("deny")
+                       && !responseLower.contains("reject")
+                       && !responseLower.contains("request_result=fail");
 
         return new SessionQueryResponse(isValid, true, response);
     }

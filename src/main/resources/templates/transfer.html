@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transfer Money - SecureBank</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Navigation -->
+        <nav class="dashboard-nav">
+            <div class="dashboard-nav-container">
+                <div class="dashboard-nav-left">
+                    <div class="logo">
+                        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+                            <rect width="32" height="32" rx="8" fill="#236CFF"/>
+                            <path d="M8 16L14 22L24 10" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="logo-text">SecureBank</span>
+                    </div>
+                </div>
+
+                <div class="dashboard-nav-right">
+                    <div class="user-menu">
+                        <a th:href="@{/logout-confirm}" class="user-menu-btn">
+                            <div class="user-avatar">
+                                <span th:text="${user.name.substring(0,1).toUpperCase()}">U</span>
+                            </div>
+                            <span class="user-name" th:text="${user.name}">User Name</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <div style="margin-bottom: 2rem;">
+                <a th:href="@{/dashboard}" style="color: #6b6e73; text-decoration: none; font-size: 0.875rem;">
+                    ← Back to Dashboard
+                </a>
+            </div>
+
+            <h1 style="font-size: 1.75rem; font-weight: 700; color: #212121; margin-bottom: 0.5rem;">Transfer Money</h1>
+            <p style="color: #6b6e73; margin-bottom: 2rem;">Choose how you'd like to send money</p>
+
+            <!-- Transfer Options -->
+            <div style="display: grid; gap: 1.5rem; max-width: 800px;">
+                <!-- Between Own Accounts -->
+                <a th:href="@{/transfer/own-accounts}" style="text-decoration: none;">
+                    <div class="account-card" style="display: flex; align-items: center; gap: 1.5rem; cursor: pointer;">
+                        <div style="width: 56px; height: 56px; background-color: #e8f0ff; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <svg width="28" height="28" fill="none" stroke="#236CFF" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                            </svg>
+                        </div>
+                        <div style="flex: 1;">
+                            <h3 style="font-size: 1.125rem; font-weight: 600; color: #212121; margin-bottom: 0.25rem;">Between My Accounts</h3>
+                            <p style="color: #6b6e73; font-size: 0.875rem;">Transfer money between your checking, savings, and investment accounts</p>
+                        </div>
+                        <svg width="24" height="24" fill="none" stroke="#6b6e73" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </div>
+                </a>
+
+                <!-- To Saved Recipient -->
+                <a th:href="@{/transfer/to-recipient}" style="text-decoration: none;">
+                    <div class="account-card" style="display: flex; align-items: center; gap: 1.5rem; cursor: pointer;">
+                        <div style="width: 56px; height: 56px; background-color: #e8f5e9; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <svg width="28" height="28" fill="none" stroke="#2ca01c" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                        </div>
+                        <div style="flex: 1;">
+                            <h3 style="font-size: 1.125rem; font-weight: 600; color: #212121; margin-bottom: 0.25rem;">
+                                To Saved Recipient
+                                <span th:if="${recipientCount > 0}" style="display: inline-block; margin-left: 0.5rem; padding: 0.125rem 0.5rem; background-color: #e8f0ff; color: #236CFF; font-size: 0.75rem; border-radius: 999px;" th:text="${recipientCount}">0</span>
+                            </h3>
+                            <p style="color: #6b6e73; font-size: 0.875rem;">Send money to people and businesses you've saved</p>
+                        </div>
+                        <svg width="24" height="24" fill="none" stroke="#6b6e73" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </div>
+                </a>
+
+                <!-- Quick Transfer -->
+                <a th:href="@{/transfer/quick}" style="text-decoration: none;">
+                    <div class="account-card" style="display: flex; align-items: center; gap: 1.5rem; cursor: pointer;">
+                        <div style="width: 56px; height: 56px; background-color: #fff4e6; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <svg width="28" height="28" fill="none" stroke="#f59e0b" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                        </div>
+                        <div style="flex: 1;">
+                            <h3 style="font-size: 1.125rem; font-weight: 600; color: #212121; margin-bottom: 0.25rem;">Quick Transfer</h3>
+                            <p style="color: #6b6e73; font-size: 0.875rem;">One-time transfer to a new recipient</p>
+                        </div>
+                        <svg width="24" height="24" fill="none" stroke="#6b6e73" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Manage Recipients Link -->
+            <div style="margin-top: 2rem; padding: 1.5rem; background-color: rgba(35, 108, 255, 0.05); border-radius: 12px; border: 1px dashed #236CFF;">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                        <h3 style="font-size: 1rem; font-weight: 600; color: #212121; margin-bottom: 0.25rem;">Manage Recipients</h3>
+                        <p style="color: #6b6e73; font-size: 0.875rem;">View, add, or remove saved recipients</p>
+                    </div>
+                    <a th:href="@{/recipients}" class="btn-primary">Manage</a>
+                </div>
+            </div>
+
+            <!-- Demo Mode Notice -->
+            <div style="margin-top: 2rem; padding: 1rem; background-color: rgba(245, 158, 11, 0.1); border-radius: 8px; border: 1px solid rgba(245, 158, 11, 0.3);">
+                <p style="color: #b45309; font-size: 0.875rem; margin: 0;">
+                    <strong>Demo Mode:</strong> Transfers will be logged but account balances will not be updated.
+                </p>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="dashboard-footer">
+            <div class="footer-content">
+                <p>&copy; 2026 SecureBank. All rights reserved. Member FDIC.</p>
+                <div class="footer-links">
+                    <a href="#">Privacy</a>
+                    <a href="#">Security</a>
+                    <a href="#">Help</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

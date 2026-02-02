@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SecureBank</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Navigation -->
+        <nav class="dashboard-nav">
+            <div class="dashboard-nav-container">
+                <div class="dashboard-nav-left">
+                    <div class="logo">
+                        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+                            <rect width="32" height="32" rx="8" fill="#236CFF"/>
+                            <path d="M8 16L14 22L24 10" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="logo-text">SecureBank</span>
+                    </div>
+                </div>
+
+                <div class="dashboard-nav-right">
+                    <!-- Quick Actions -->
+                    <a th:href="@{/transfer}" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background-color: #236CFF; color: white; border-radius: 8px; text-decoration: none; font-size: 0.875rem; font-weight: 500; margin-right: 1rem; transition: background-color 0.2s ease;">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                        </svg>
+                        <span>Transfer</span>
+                    </a>
+
+                    <!-- User menu -->
+                    <div class="user-menu" style="position: relative;">
+                        <button onclick="toggleUserMenu()" class="user-menu-btn" style="border: none;">
+                            <div class="user-avatar">
+                                <span th:text="${user.name.substring(0,1).toUpperCase()}">U</span>
+                            </div>
+                            <span class="user-name" th:text="${user.name}">User Name</span>
+                            <svg width="16" height="16" fill="none" stroke="#6b6e73" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+
+                        <div id="userDropdown" style="display: none; position: absolute; right: 0; top: calc(100% + 0.5rem); width: 200px; background-color: white; border-radius: 8px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15); border: 1px solid #e0e3e7; padding: 0.5rem 0; z-index: 100;">
+                            <a th:href="@{/change-password}" style="display: block; width: 100%; padding: 0.75rem 1rem; text-align: left; font-size: 0.875rem; color: #212121; background: transparent; border: none; cursor: pointer; transition: background-color 0.2s ease; text-decoration: none;">
+                                Change Password
+                            </a>
+                            <hr style="margin: 0.5rem 0; border: none; border-top: 1px solid #e0e3e7;">
+                            <a th:href="@{/logout-confirm}" style="display: block; width: 100%; padding: 0.75rem 1rem; text-align: left; font-size: 0.875rem; color: #d52b1e; background: transparent; border: none; cursor: pointer; transition: background-color 0.2s ease; text-decoration: none;">
+                                Sign Out
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <script>
+            function toggleUserMenu() {
+                var dropdown = document.getElementById('userDropdown');
+                dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+            }
+
+            // Close dropdown when clicking outside
+            window.onclick = function(event) {
+                if (!event.target.matches('.user-menu-btn') && !event.target.closest('.user-menu-btn')) {
+                    var dropdown = document.getElementById('userDropdown');
+                    if (dropdown && dropdown.style.display === 'block') {
+                        dropdown.style.display = 'none';
+                    }
+                }
+            }
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Welcome banner -->
+            <div class="welcome-banner">
+                <div class="welcome-content">
+                    <div class="welcome-text">
+                        <h1>Good <span th:text="${greeting}">morning</span>, <span th:text="${user.name.split(' ')[0]}">there</span>!</h1>
+                        <p>Here's your financial overview</p>
+                    </div>
+                    <div class="welcome-balance">
+                        <p>Total Balance</p>
+                        <h2 th:text="${#numbers.formatCurrency(totalBalance)}">$0.00</h2>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accounts List -->
+            <div class="accounts-list">
+                <h2>Your Accounts</h2>
+
+                <div th:if="${#lists.isEmpty(accounts)}" class="no-transactions">
+                    <p>No accounts found. Contact your bank to set up accounts.</p>
+                </div>
+
+                <div th:each="account : ${accounts}" class="account-card">
+                    <div class="account-card-header">
+                        <div class="account-info">
+                            <div class="account-name-row">
+                                <h3 th:text="${account.name}">Account Name</h3>
+                                <span class="account-type" th:text="${account.type.name().toLowerCase()}">Type</span>
+                            </div>
+                            <p class="account-number">
+                                <span th:text="${account.accountNumber}">****1234</span> •
+                                <span th:text="${account.institution}">Institution</span>
+                            </p>
+                        </div>
+                        <div class="account-balance">
+                            <p class="balance-value" th:text="${#numbers.formatCurrency(account.balance)}">$0.00</p>
+                            <p class="available-value">Available: <span th:text="${#numbers.formatCurrency(account.available)}">$0.00</span></p>
+                        </div>
+                    </div>
+
+                    <!-- Savings account APY -->
+                    <div th:if="${account.type.name() == 'SAVINGS' && account.apy != null}" class="account-apy">
+                        <span class="apy-rate" th:text="${account.apy + '% APY'}">4.5% APY</span>
+                        <span class="apy-earnings">• Earning <span th:text="${#numbers.formatCurrency(account.balance * account.apy / 100 / 12)}">$0.00</span>/mo</span>
+                    </div>
+
+                    <!-- Investment account change -->
+                    <div th:if="${account.type.name() == 'INVESTMENT' && account.changePercent != null}" class="account-change">
+                        <span class="change-rate" th:classappend="${account.changePercent >= 0} ? 'positive' : 'negative'">
+                            <span th:text="${account.changePercent >= 0 ? '+' : ''} + ${account.changePercent} + '%'">+0%</span>
+                        </span>
+                        <span class="change-period">• Past 30 days</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="transactions-section">
+                <div class="transactions-header">
+                    <h2>Recent Transactions</h2>
+                </div>
+
+                <div class="transactions-list">
+                    <div th:if="${#lists.isEmpty(transactions)}" class="no-transactions">
+                        <p>No transactions yet. Your transaction history will appear here.</p>
+                    </div>
+
+                    <div th:each="transaction : ${transactions}" class="transaction-item">
+                        <div class="transaction-left">
+                            <div class="transaction-icon-wrapper" th:classappend="${transaction.amount >= 0} ? 'income' : ''">
+                                <span th:text="${transaction.description.substring(0, 1).toUpperCase()}">T</span>
+                            </div>
+                            <div class="transaction-details">
+                                <p class="transaction-desc" th:text="${transaction.description}">Transaction Description</p>
+                                <p class="transaction-meta">
+                                    <span th:text="${transaction.category}">Category</span> •
+                                    <span th:text="${#temporals.format(transaction.date, 'MMM d')}">Jan 1</span>
+                                    <span th:if="${transaction.status.name() == 'PENDING'}" class="pending-badge">• Pending</span>
+                                </p>
+                            </div>
+                        </div>
+                        <span class="transaction-amount" th:classappend="${transaction.amount >= 0} ? 'positive' : ''">
+                            <span th:text="${transaction.amount >= 0 ? '+' : ''} + ${#numbers.formatCurrency(transaction.amount)}">$0.00</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="dashboard-footer">
+            <div class="footer-content">
+                <p>&copy; 2026 SecureBank. All rights reserved. Member FDIC.</p>
+                <div class="footer-links">
+                    <a href="#">Privacy</a>
+                    <a href="#">Security</a>
+                    <a href="#">Help</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

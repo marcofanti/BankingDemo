@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Transfer - SecureBank</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <div class="dashboard">
+        <nav class="dashboard-nav">
+            <div class="dashboard-nav-container">
+                <div class="dashboard-nav-left">
+                    <div class="logo">
+                        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+                            <rect width="32" height="32" rx="8" fill="#236CFF"/>
+                            <path d="M8 16L14 22L24 10" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="logo-text">SecureBank</span>
+                    </div>
+                </div>
+                <div class="dashboard-nav-right">
+                    <div class="user-menu">
+                        <a th:href="@{/logout-confirm}" class="user-menu-btn">
+                            <div class="user-avatar">
+                                <span th:text="${user.name.substring(0,1).toUpperCase()}">U</span>
+                            </div>
+                            <span class="user-name" th:text="${user.name}">User Name</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <main class="dashboard-main">
+            <div style="margin-bottom: 2rem;">
+                <a th:href="@{/transfer}" style="color: #6b6e73; text-decoration: none; font-size: 0.875rem;">
+                    ← Back to Transfer Options
+                </a>
+            </div>
+
+            <h1 style="font-size: 1.75rem; font-weight: 700; color: #212121; margin-bottom: 0.5rem;">Quick Transfer</h1>
+            <p style="color: #6b6e73; margin-bottom: 2rem;">One-time transfer to a new recipient</p>
+
+            <div th:if="${success}" class="auth-success" style="margin-bottom: 1.5rem; background-color: rgba(44, 160, 28, 0.1); border: 1px solid #2ca01c; color: #2ca01c;">
+                <span th:text="${success}">Success</span>
+            </div>
+
+            <div th:if="${error}" class="auth-error" style="margin-bottom: 1.5rem; background-color: rgba(213, 43, 30, 0.1); border: 1px solid #d52b1e; color: #d52b1e;">
+                <span th:text="${error}">Error</span>
+            </div>
+
+            <div style="max-width: 600px;">
+                <form th:action="@{/transfer/quick}" method="post">
+                    <div class="form-group">
+                        <label for="fromAccountId" style="color: #212121;">From Account</label>
+                        <select id="fromAccountId" name="fromAccountId" required style="width: 100%; padding: 0.75rem 1rem; background-color: white; border: 1px solid #e0e3e7; border-radius: 8px; color: #212121; font-size: 0.875rem;">
+                            <option value="">Select your account</option>
+                            <option th:each="account : ${accounts}" th:value="${account.id}" th:text="${account.name + ' (' + #numbers.formatCurrency(account.balance) + ')'}">Account</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="recipientName" style="color: #212121;">Recipient Name</label>
+                        <input type="text" id="recipientName" name="recipientName" placeholder="John Doe" required style="width: 100%; padding: 0.75rem 1rem; background-color: white; border: 1px solid #e0e3e7; border-radius: 8px; color: #212121; font-size: 0.875rem;">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="recipientAccount" style="color: #212121;">Recipient Account Number</label>
+                        <input type="text" id="recipientAccount" name="recipientAccount" placeholder="123456789" required style="width: 100%; padding: 0.75rem 1rem; background-color: white; border: 1px solid #e0e3e7; border-radius: 8px; color: #212121; font-size: 0.875rem;">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="amount" style="color: #212121;">Amount</label>
+                        <input type="number" id="amount" name="amount" step="0.01" min="0.01" placeholder="0.00" required style="width: 100%; padding: 0.75rem 1rem; background-color: white; border: 1px solid #e0e3e7; border-radius: 8px; color: #212121; font-size: 0.875rem;">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="memo" style="color: #212121;">Memo (Optional)</label>
+                        <input type="text" id="memo" name="memo" placeholder="What's this for?" style="width: 100%; padding: 0.75rem 1rem; background-color: white; border: 1px solid #e0e3e7; border-radius: 8px; color: #212121; font-size: 0.875rem;">
+                    </div>
+
+                    <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="checkbox" id="saveRecipient" name="saveRecipient" value="true" style="width: auto; margin: 0;">
+                        <label for="saveRecipient" style="color: #212121; margin: 0;">Save this recipient for future transfers</label>
+                    </div>
+
+                    <button type="submit" class="auth-submit" style="background-color: #236CFF; margin-top: 1rem;">Send Money</button>
+                </form>
+            </div>
+        </main>
+
+        <footer class="dashboard-footer">
+            <div class="footer-content">
+                <p>&copy; 2026 SecureBank. All rights reserved. Member FDIC.</p>
+                <div class="footer-links">
+                    <a href="#">Privacy</a>
+                    <a href="#">Security</a>
+                    <a href="#">Help</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

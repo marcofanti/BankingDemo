@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved Recipients - SecureBank</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <div class="dashboard">
+        <nav class="dashboard-nav">
+            <div class="dashboard-nav-container">
+                <div class="dashboard-nav-left">
+                    <div class="logo">
+                        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+                            <rect width="32" height="32" rx="8" fill="#236CFF"/>
+                            <path d="M8 16L14 22L24 10" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="logo-text">SecureBank</span>
+                    </div>
+                </div>
+                <div class="dashboard-nav-right">
+                    <div class="user-menu">
+                        <a th:href="@{/logout-confirm}" class="user-menu-btn">
+                            <div class="user-avatar">
+                                <span th:text="${user.name.substring(0,1).toUpperCase()}">U</span>
+                            </div>
+                            <span class="user-name" th:text="${user.name}">User Name</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <main class="dashboard-main">
+            <div style="margin-bottom: 2rem;">
+                <a th:href="@{/transfer}" style="color: #6b6e73; text-decoration: none; font-size: 0.875rem;">
+                    ← Back to Transfer
+                </a>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;">
+                <div>
+                    <h1 style="font-size: 1.75rem; font-weight: 700; color: #212121; margin-bottom: 0.5rem;">Saved Recipients</h1>
+                    <p style="color: #6b6e73;">Manage people and businesses you frequently send money to</p>
+                </div>
+                <a th:href="@{/recipients/add}" class="btn-primary">
+                    <span style="margin-right: 0.5rem;">+</span> Add Recipient
+                </a>
+            </div>
+
+            <div th:if="${success}" class="auth-success" style="margin-bottom: 1.5rem; background-color: rgba(44, 160, 28, 0.1); border: 1px solid #2ca01c; color: #2ca01c;">
+                <span th:text="${success}">Success</span>
+            </div>
+
+            <div th:if="${error}" class="auth-error" style="margin-bottom: 1.5rem; background-color: rgba(213, 43, 30, 0.1); border: 1px solid #d52b1e; color: #d52b1e;">
+                <span th:text="${error}">Error</span>
+            </div>
+
+            <div th:if="${#lists.isEmpty(recipients)}" style="padding: 3rem; background-color: #f4f5f7; border-radius: 12px; text-align: center;">
+                <svg width="64" height="64" fill="none" stroke="#6b6e73" viewBox="0 0 24 24" style="margin: 0 auto 1rem;">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <h3 style="font-size: 1.25rem; font-weight: 600; color: #212121; margin-bottom: 0.5rem;">No Recipients Yet</h3>
+                <p style="color: #6b6e73; margin-bottom: 1.5rem;">Add recipients to make future transfers faster and easier</p>
+                <a th:href="@{/recipients/add}" class="btn-primary">Add Your First Recipient</a>
+            </div>
+
+            <div th:if="${!#lists.isEmpty(recipients)}" style="display: grid; gap: 1rem;">
+                <div th:each="recipient : ${recipients}" class="account-card" style="display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="width: 48px; height: 48px; background-color: #e8f0ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #236CFF; font-weight: 600; font-size: 1.125rem;">
+                            <span th:text="${recipient.name.substring(0,1).toUpperCase()}">R</span>
+                        </div>
+                        <div>
+                            <h3 style="font-size: 1rem; font-weight: 600; color: #212121; margin-bottom: 0.25rem;">
+                                <span th:text="${recipient.name}">Recipient Name</span>
+                                <span th:if="${recipient.nickname != null && !recipient.nickname.isEmpty()}" style="color: #6b6e73; font-weight: 400; margin-left: 0.5rem;">
+                                    (<span th:text="${recipient.nickname}">Nickname</span>)
+                                </span>
+                            </h3>
+                            <p style="color: #6b6e73; font-size: 0.875rem;" th:text="${recipient.accountNumber}">Account Number</p>
+                        </div>
+                    </div>
+                    <form th:action="@{/recipients/delete/{id}(id=${recipient.id})}" method="post" style="margin: 0;" onsubmit="return confirm('Are you sure you want to delete this recipient?');">
+                        <button type="submit" style="padding: 0.5rem 1rem; background-color: transparent; border: 1px solid #e0e3e7; border-radius: 8px; color: #d52b1e; cursor: pointer; font-size: 0.875rem; font-weight: 500; transition: all 0.2s ease;">
+                            Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </main>
+
+        <footer class="dashboard-footer">
+            <div class="footer-content">
+                <p>&copy; 2026 SecureBank. All rights reserved. Member FDIC.</p>
+                <div class="footer-links">
+                    <a href="#">Privacy</a>
+                    <a href="#">Security</a>
+                    <a href="#">Help</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

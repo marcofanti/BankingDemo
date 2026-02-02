@@ -16,6 +16,10 @@
         console.log('web_session_id_global: ' + web_session_id_global);
         console.log('page_id: ' + page_id);
         console.log('org_id: ' + org_id);
+
+        // Store session_id_global in sessionStorage for login page
+        sessionStorage.setItem('session_id_global', session_id_global);
+
         bhsescondido.outronome(profiling_server, org_id, session_id_global, page_id);
     </script>
 </head>

@@ -58,8 +58,22 @@
                     >
                 </div>
 
+                <!-- Hidden field for session_id -->
+                <input type="hidden" id="session_id" name="session_id" />
+
                 <button type="submit" class="auth-submit">Sign In</button>
             </form>
+
+            <script>
+                // Retrieve session_id from sessionStorage and populate hidden field
+                var sessionId = sessionStorage.getItem('session_id_global');
+                if (sessionId) {
+                    document.getElementById('session_id').value = sessionId;
+                    console.log('Session ID retrieved from sessionStorage:', sessionId);
+                } else {
+                    console.warn('No session_id_global found in sessionStorage');
+                }
+            </script>
 
             <div class="auth-footer">
                 Don't have an account? <a th:href="@{/signup}">Sign up</a>

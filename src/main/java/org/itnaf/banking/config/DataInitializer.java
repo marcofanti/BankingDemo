@@ -8,8 +8,8 @@ import org.itnaf.banking.model.User;
 import org.itnaf.banking.repository.BankAccountRepository;
 import org.itnaf.banking.repository.TransactionRepository;
 import org.itnaf.banking.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -33,15 +33,7 @@ public class DataInitializer implements CommandLineRunner {
     private final BankAccountRepository bankAccountRepository;
     private final TransactionRepository transactionRepository;
     private final PasswordEncoder passwordEncoder;
-
-    @Value("${app.user4.name}")
-    private String user4Name;
-
-    @Value("${app.user4.email}")
-    private String user4Email;
-
-    @Value("${app.user4.password}")
-    private String user4Password;
+    private final Environment env;
 
     @Override
     public void run(String... args) {
@@ -64,7 +56,10 @@ public class DataInitializer implements CommandLineRunner {
         log.info("  - demo@securebank.com / password123");
 
         // Optionally create a 4th user from environment variables
-        if (user4Email != null && !user4Email.trim().isEmpty()) {
+        String user4Email = env.getProperty("app.user4.email", "");
+        if (!user4Email.trim().isEmpty()) {
+            String user4Name = env.getProperty("app.user4.name", "");
+            String user4Password = env.getProperty("app.user4.password", "");
             User user4 = createUser(user4Name, user4Email, user4Password);
             createAccountsAndTransactionsForUser(user4);
             log.info("  - {} (from environment)", user4Email);

@@ -62,6 +62,8 @@ public class SessionQueryService {
                 .queryParam("account_login", accountEmail)
                 .queryParam("event_type", eventType)
                 .queryParam("policy", "behaviosec_default_policy")
+                .queryParam("output_format", "JSON")
+                .queryParam("account_password_hash", passwordHash)
                 .build()
                 .toUriString();
 

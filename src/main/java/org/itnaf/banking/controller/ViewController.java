@@ -22,6 +22,15 @@ public class ViewController {
     @Value("${app.profiling.server}")
     private String profilingServer;
 
+    @Value("${app.show.demo.accounts}")
+    private boolean showDemoAccounts;
+
+    @Value("${app.user4.email:}")
+    private String user4Email;
+
+    @Value("${app.user4.password:}")
+    private String user4Password;
+
     /**
      * Landing page - displays marketing content and call to action.
      * Accessible to all users (authenticated and unauthenticated).
@@ -53,6 +62,11 @@ public class ViewController {
         }
         if (logout != null) {
             model.addAttribute("message", "You have been logged out successfully.");
+        }
+        model.addAttribute("showDemoAccounts", showDemoAccounts);
+        if (showDemoAccounts && !user4Email.trim().isEmpty()) {
+            model.addAttribute("user4Email", user4Email);
+            model.addAttribute("user4Password", user4Password);
         }
         return "login";
     }

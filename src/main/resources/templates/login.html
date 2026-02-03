@@ -80,11 +80,12 @@
             </div>
 
             <!-- Demo account info -->
-            <div style="margin-top: 2rem; padding: 1rem; background-color: rgba(35, 108, 255, 0.1); border-radius: 8px; border: 1px solid rgba(35, 108, 255, 0.3);">
+            <div th:if="${showDemoAccounts}" style="margin-top: 2rem; padding: 1rem; background-color: rgba(35, 108, 255, 0.1); border-radius: 8px; border: 1px solid rgba(35, 108, 255, 0.3);">
                 <p style="color: rgba(255, 255, 255, 0.9); font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem;">Demo Accounts:</p>
                 <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.75rem; margin-bottom: 0.25rem;">• john.doe@securebank.com / password123</p>
                 <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.75rem; margin-bottom: 0.25rem;">• jane.smith@securebank.com / password123</p>
-                <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.75rem;">• demo@securebank.com / password123</p>
+                <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.75rem; margin-bottom: 0.25rem;">• demo@securebank.com / password123</p>
+                <p th:if="${user4Email}" style="color: rgba(255, 255, 255, 0.7); font-size: 0.75rem;" th:text="'• ' + user4Email + ' / ' + user4Password"></p>
             </div>
         </div>
     </div>

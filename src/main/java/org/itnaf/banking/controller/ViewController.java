@@ -16,6 +16,12 @@ public class ViewController {
     @Value("${app.org.id}")
     private String orgId;
 
+    @Value("${app.page.id}")
+    private String pageId;
+
+    @Value("${app.profiling.server}")
+    private String profilingServer;
+
     /**
      * Landing page - displays marketing content and call to action.
      * Accessible to all users (authenticated and unauthenticated).
@@ -23,6 +29,8 @@ public class ViewController {
     @GetMapping("/")
     public String landingPage(Model model) {
         model.addAttribute("orgId", orgId);
+        model.addAttribute("pageId", pageId);
+        model.addAttribute("profilingServer", profilingServer);
         return "landing";
     }
 

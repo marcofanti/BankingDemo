@@ -1,5 +1,6 @@
 package org.itnaf.banking.security;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -7,11 +8,15 @@ import org.itnaf.banking.service.SessionQueryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Custom authentication success handler that validates the session
@@ -22,8 +27,21 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
     private static final Logger logger = LoggerFactory.getLogger(CustomAuthenticationSuccessHandler.class);
 
+    @Value("${app.validation.ignore.emails:}")
+    private String validationIgnoreEmailsRaw;
+
+    private List<String> validationIgnoreEmails;
+
     @Autowired
     private SessionQueryService sessionQueryService;
+
+    @PostConstruct
+    private void init() {
+        validationIgnoreEmails = Arrays.stream(validationIgnoreEmailsRaw.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toList());
+    }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -60,15 +78,24 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                 logger.info("Session validated successfully for user {}. Redirecting to dashboard.", email);
                 response.sendRedirect("/dashboard");
             } else {
-                // Session validation failed - block login
-                logger.warn("Session validation failed for user {}. Blocking access. Reason: {}",
+                // Session validation failed
+                logger.warn("Session validation failed for user {}. Reason: {}",
                         email, apiResponse.getMessage());
 
-                // Invalidate the Spring Security session
-                request.getSession().invalidate();
+                // Check if user is in ignore list - allow login anyway
+                if (validationIgnoreEmails.contains(email)) {
+                    logger.info("User {} is in validation ignore list. Allowing login despite validation failure.", email);
+                    response.sendRedirect("/dashboard");
+                } else {
+                    // Block login for users not in ignore list
+                    logger.warn("Blocking access for user {}.", email);
 
-                // Redirect to login with error
-                response.sendRedirect("/login?error=Session validation failed. Please try again.");
+                    // Invalidate the Spring Security session
+                    request.getSession().invalidate();
+
+                    // Redirect to login with error
+                    response.sendRedirect("/login?error=Session validation failed. Please try again.");
+                }
             }
 
         } catch (Exception e) {

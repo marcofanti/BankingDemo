@@ -51,33 +51,19 @@ public class SessionQueryService {
         try {
             // Hash the password using SHA-256
             String passwordHash = hashPassword(plainPassword);
-
-            // Log all parameters
-            System.out.println("========== SESSION QUERY API CALL PARAMETERS ==========");
-            System.out.println("API Base URL: " + apiBaseUrl);
-            System.out.println("org_id: " + orgId);
-            System.out.println("api_key: " + (apiKey != null ? apiKey.substring(0, Math.min(4, apiKey.length())) + "***" : "null"));
-            System.out.println("session_id: " + sessionId);
-            System.out.println("service_type: session-policy");
-            System.out.println("account_login: " + accountEmail);
-            System.out.println("account_email: " + accountEmail);
-            System.out.println("password_hash: " + passwordHash);
-            System.out.println("event_type: " + eventType);
-            System.out.println("======================================================");
-
             // Build the API URL with query parameters
             String url = UriComponentsBuilder.fromHttpUrl(apiBaseUrl)
-                    .path("/api/session-query")
-                    .queryParam("org_id", orgId)
-                    .queryParam("api_key", apiKey)
-                    .queryParam("session_id", sessionId)
-                    .queryParam("service_type", "session-policy")
-                    .queryParam("account_login", accountEmail)
-                    .queryParam("account_email", accountEmail)
-                    .queryParam("password_hash", passwordHash)
-                    .queryParam("event_type", eventType)
-                    .build()
-                    .toUriString();
+                .path("/api/session-query")
+                .queryParam("org_id", orgId)
+                .queryParam("api_key", apiKey)
+                .queryParam("session_id", sessionId)
+                .queryParam("web_session_id", sessionId + "-web")
+                .queryParam("service_type", "session-policy")
+                .queryParam("account_login", accountEmail)
+                .queryParam("event_type", eventType)
+                .queryParam("policy", "behaviosec_default_policy")
+                .build()
+                .toUriString();
 
             logger.info("Calling session query API for user: {} with session: {}", accountEmail, sessionId);
             System.out.println("Full API URL (masked): " + url.replaceAll("api_key=[^&]*", "api_key=***"));

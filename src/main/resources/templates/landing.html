@@ -7,20 +7,20 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <script type="text/javascript" src="/js/fp-clientlib-v5_1.js"></script>
     <script type="text/javascript" th:inline="javascript">
-        var session_id_global = Math.random().toString(36).substr(2);
-        var web_session_id_global = Math.random().toString(36).substr(2);
-        var page_id = '91';
-        var org_id = /*[[${orgId}]]*/ 'your-org-id-here';
-        var profiling_server = 'h.online-metrix.net';
+        var session_id_global = crypto.randomUUID();
+        var web_session_id_global = crypto.randomUUID();
+        var page_id = /*[[${pageId}]]*/ 'your_page_id';
+        var org_id = /*[[${orgId}]]*/ 'your_org_id';
+        var profiling_server = /*[[${profilingServer}]]*/ 'your_profiling_server';
         console.log('session_id_global: ' + session_id_global);
         console.log('web_session_id_global: ' + web_session_id_global);
         console.log('page_id: ' + page_id);
         console.log('org_id: ' + org_id);
 
+        bhsescondido.outronome(profiling_server, org_id, session_id_global, page_id);
+        console.log('profiling_server: ' + profiling_server);
         // Store session_id_global in sessionStorage for login page
         sessionStorage.setItem('session_id_global', session_id_global);
-
-        bhsescondido.outronome(profiling_server, org_id, session_id_global, page_id);
     </script>
 </head>
 <body>

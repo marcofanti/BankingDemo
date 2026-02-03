@@ -21,7 +21,7 @@ cp .env.local .env
 mvn spring-boot:run
 ```
 
-The app starts on **port 7654**: [http://localhost:7654](http://localhost:7654)
+The app starts on **port 8080**: [http://localhost:8080](http://localhost:8080)
 
 ## Environment Variables
 
@@ -87,7 +87,7 @@ src/main/java/org/itnaf/banking/
 
 ## H2 Console
 
-Available at [http://localhost:7654/h2-console](http://localhost:7654/h2-console) during development.
+Available at [http://localhost:8080/h2-console](http://localhost:8080/h2-console) during development.
 
 - **JDBC URL:** `jdbc:h2:mem:bankingdb`
 - **User:** `sa`

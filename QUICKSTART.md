@@ -7,6 +7,7 @@ A complete Spring Boot banking demo application with user authentication, accoun
 
 ### Option 1: Using Maven (Recommended for Development)
 ```bash
+mvn package
 mvn spring-boot:run
 ```
 
@@ -28,6 +29,33 @@ export ORG_ID=your-org-id-here
 export API_KEY=your-api-key-here
 mvn spring-boot:run
 ```
+
+### Option 4: Using a .env File (Recommended for local development)
+The application includes the [spring-dotenv](https://github.com/paulschwarz/spring-dotenv) library, which automatically loads a `.env` file from the project root into the Spring Environment. No extra flags or exports needed.
+
+```bash
+# Copy the template and fill in your real values
+cp .env.local .env
+
+# Run – .env is loaded automatically
+mvn spring-boot:run
+```
+
+> `.env` is git-ignored. Never commit it; edit `.env.local` only to update the template.
+
+### Option 5: Docker
+```bash
+# Copy the template and fill in your real values
+cp .env.local .env
+
+# Build the image
+docker build -t securebank .
+
+# Run – env vars are passed in from .env
+docker run -d --name securebank --env-file .env -p 8080:8080 securebank
+```
+
+The app starts on **http://localhost:8080**
 
 ## Environment Variables
 

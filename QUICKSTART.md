@@ -5,21 +5,26 @@ A complete Spring Boot banking demo application with user authentication, accoun
 
 ## Running the Application
 
-### Option 1: Using Maven (Recommended for Development)
+### Option 1: Using Maven and a .env File (Recommended for Development)
+
+The application includes the [spring-dotenv](https://github.com/paulschwarz/spring-dotenv) library, which automatically loads a `.env` file from the project root into the Spring Environment. No extra flags or exports needed.
+
 ```bash
-mvn package
+# Copy the template and fill in your real values
+cp .env.local .env
+
+# Build the application
+mvn clean package
+```
+
+> `.env` is git-ignored. Never commit it; edit `.env.local` only to update the template.
+
+```bash
+# Run – .env is loaded automatically
 mvn spring-boot:run
 ```
 
-### Option 2: Build and Run JAR
-```bash
-mvn clean package
-java -jar target/Banking-1.0-SNAPSHOT.jar
-```
-
-The application will start on **http://localhost:8080**
-
-### Option 3: Run with Environment Variables
+### Option 2: Run with Environment Variables
 ```bash
 # Set organization ID and API key for session validation
 ORG_ID=your-org-id-here API_KEY=your-api-key-here mvn spring-boot:run
@@ -30,20 +35,7 @@ export API_KEY=your-api-key-here
 mvn spring-boot:run
 ```
 
-### Option 4: Using a .env File (Recommended for local development)
-The application includes the [spring-dotenv](https://github.com/paulschwarz/spring-dotenv) library, which automatically loads a `.env` file from the project root into the Spring Environment. No extra flags or exports needed.
-
-```bash
-# Copy the template and fill in your real values
-cp .env.local .env
-
-# Run – .env is loaded automatically
-mvn spring-boot:run
-```
-
-> `.env` is git-ignored. Never commit it; edit `.env.local` only to update the template.
-
-### Option 5: Docker
+### Option 3: Docker (Recommended for Production and for non-developers)
 ```bash
 # Copy the template and fill in your real values
 cp .env.local .env

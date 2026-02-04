@@ -26,7 +26,7 @@ mvn spring-boot:run
 
 The app starts on **port 8080**: [http://localhost:8080](http://localhost:8080)
 
-### Option 4 — Docker
+### Option 2 — Docker
 
 ```bash
 # 1. Clone and enter the repo

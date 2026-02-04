@@ -6,8 +6,11 @@ A modern banking demo application built with Spring Boot 3.2.2 and Java 21. Incl
 
 - Java 21+
 - Maven 3.x
+- Docker (for Option 4)
 
 ## Quick Start
+
+### Option 1 — Maven (default)
 
 ```bash
 # 1. Clone and enter the repo
@@ -19,6 +22,25 @@ cp .env.local .env
 
 # 3. Run
 mvn spring-boot:run
+```
+
+The app starts on **port 8080**: [http://localhost:8080](http://localhost:8080)
+
+### Option 4 — Docker
+
+```bash
+# 1. Clone and enter the repo
+git clone https://github.com/marcofanti/BankingDemo.git
+cd BankingDemo
+
+# 2. Copy the env template and fill in real values
+cp .env.local .env
+
+# 3. Build the image
+docker build -t securebank .
+
+# 4. Run the container, passing your env file
+docker run -d --name securebank --env-file .env -p 8080:8080 securebank
 ```
 
 The app starts on **port 8080**: [http://localhost:8080](http://localhost:8080)
